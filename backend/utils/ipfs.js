@@ -1,41 +1,30 @@
-const { create } = require("ipfs-http-client");
-const fetch = require("node-fetch");
+// utils/ipfs.js
+const axios = require("axios");
+const FormData = require("form-data");
 
-const IPFS_API_URL = "http://127.0.0.1:5001";
+const IPFS_API_URL = "http://127.0.0.1:5001/api/v0/add";
 
-const customFetch = (url, options = {}) => {
-    if (options.body) {
-        options.duplex = "half";
-    }
-    options.signal = options.signal || AbortSignal.timeout(30000);
-    return fetch(url, options);
-};
-
-const ipfs = create({
-    url: IPFS_API_URL,
-    fetch: customFetch
-});
-
-const uploadToIPFS = async (fileBuffer, fileName = "unnamed") => {
+const uploadToIPFS = async (fileBuffer, fileName) => {
     try {
-        if (!fileBuffer || fileBuffer.length === 0) {
-            throw new Error("Invalid file buffer: empty or missing");
+        console.log("Uploading file buffer to IPFS via HTTP API...");
+
+        const formData = new FormData();
+        formData.append("file", fileBuffer, { filename: fileName });
+
+        const response = await axios.post(IPFS_API_URL, formData, {
+            headers: formData.getHeaders()
+        });
+
+        if (!response.data.Hash) {
+            console.error("IPFS returned invalid result:", response.data);
+            throw new Error("IPFS returned an invalid CID result.");
         }
 
-        console.log(`Uploading file buffer to IPFS (size: ${fileBuffer.length} bytes)...`);
+        console.log("✅ IPFS upload successful. CID:", response.data.Hash);
+        return response.data.Hash;
 
-        const addResult = await ipfs.add(
-            { path: fileName, content: fileBuffer },
-            { pin: true }
-        );
-
-        if (!addResult || !addResult.cid) {
-            throw new Error("IPFS returned invalid result");
-        }
-
-        return addResult.cid.toString();
     } catch (error) {
-        console.error(`❌ IPFS Upload Failed for ${fileName}:`, error.message || error);
+        console.error("IPFS upload error:", error);
         throw error;
     }
 };
