@@ -43,3 +43,12 @@ async function logTransactionOnBlockchain(message) {
 }
 
 module.exports = { logTransactionOnBlockchain };
+
+// TEST RUN
+if (require.main === module) {
+    (async () => {
+        console.log("🚀 Running blockchain test...");
+        const sig = await logTransactionOnBlockchain("Test log entry");
+        console.log("🔗 Explorer URL:", `https://explorer.solana.com/tx/${sig}?cluster=devnet`);
+    })();
+}

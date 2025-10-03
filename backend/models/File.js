@@ -6,8 +6,8 @@ const fileSchema = new mongoose.Schema({
     ipfsHash: { type: String, required: true },
     size: { type: Number },
     mimeType: { type: String },
-    solanaTxHash: { type: String },
-    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    solanaTxHash: { type: String, default: null },
+    owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
     createdAt: { type: Date, default: Date.now }
 });
 

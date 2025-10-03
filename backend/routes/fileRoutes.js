@@ -7,8 +7,13 @@ const { protect } = require("../middleware/authMiddleware");
 const router = express.Router();
 const upload = multer(); // Using multer memory storage
 
+// Upload file
 router.post("/upload", protect, upload.single("file"), uploadFile);
+
+// List files for user
 router.get("/", protect, listFiles);
-router.get("/:cid/download", protect, downloadFile);
+
+// Download file by CID
+router.get("/download/:cid", protect, downloadFile);
 
 module.exports = router;
