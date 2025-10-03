@@ -1,13 +1,14 @@
 // backend/app.js
 const express = require("express");
 const dotenv = require("dotenv");
+dotenv.config(); // Must load first
+
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const fileRoutes = require("./routes/fileRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const cors = require("cors");
 
-dotenv.config();
 connectDB();
 
 const app = express();

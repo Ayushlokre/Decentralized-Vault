@@ -1,8 +1,14 @@
 // config/solana.js
-const { Connection, clusterApiUrl } = require("@solana/web3.js");
+require("dotenv").config();
+const { Connection, clusterApiUrl, Keypair } = require("@solana/web3.js");
 
-const QUICKNODE_URL = "https://little-bold-star.solana-devnet.quiknode.pro/fe227d058325399c9cf511ad1a5302d367a28ddf/";
+// Create connection to Solana devnet
+const connection = new Connection(clusterApiUrl("devnet"), "confirmed");
 
-const connection = new Connection(QUICKNODE_URL, "confirmed");
+const secretKey = JSON.parse(process.env.SOLANA_SECRET_KEY_JSON);
+const wallet = Keypair.fromSecretKey(Uint8Array.from(secretKey));
 
-module.exports = connection;
+console.log("🔗 Solana connection established.");
+console.log("🆔 Wallet Public Key:", wallet.publicKey.toBase58());
+
+module.exports = { connection, wallet };
